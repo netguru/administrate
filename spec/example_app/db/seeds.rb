@@ -10,6 +10,7 @@ LineItem.destroy_all
 Order.destroy_all
 Customer.destroy_all
 Product.destroy_all
+Category.destroy_all
 
 100.times do
   name = "#{Faker::Name.first_name} #{Faker::Name.last_name}"
@@ -19,10 +20,15 @@ Product.destroy_all
   )
 end
 
-product_attributes = YAML.load_file(Rails.root.join('db/seeds/products.yml'))
+%w(Family Party).each do |name|
+  Category.create!(name: name)
+end
+
+product_attributes = YAML.load_file(Rails.root.join("db/seeds/products.yml"))
 
 product_attributes.each do |attributes|
-  Product.create attributes.merge(price: 20 + rand(50))
+  product = Product.create attributes.merge(price: 20 + rand(50))
+  product.categories << Category.all.sample
 end
 
 Customer.all.each do |customer|
